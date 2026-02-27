@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 15s  # 每 15 秒抓取一次指标
+
+scrape_configs:
+  # 抓取我们的应用程序指标
+  - job_name: 'app'
+    static_configs:
+      - targets: ['host.docker.internal:8080']
+
+  # 抓取 Prometheus 自身的指标
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
