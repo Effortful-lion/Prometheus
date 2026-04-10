@@ -1,7 +1,7 @@
 # 启动监控系统
 Write-Host "Starting monitoring system..."
 
-# 启动 Prometheus 和 Grafana 服务
+# 启动 Prometheus、Alertmanager 和 Grafana 服务
 docker-compose up -d
 
 # 等待服务启动
@@ -12,6 +12,7 @@ Start-Sleep -Seconds 10
 Write-Host "Monitoring system started successfully!"
 Write-Host "---------------------------------------"
 Write-Host "Prometheus: http://localhost:9090"
+Write-Host "Alertmanager: http://localhost:9093"
 Write-Host "Grafana: http://localhost:3000"
 Write-Host "---------------------------------------"
 Write-Host "Grafana login credentials:"

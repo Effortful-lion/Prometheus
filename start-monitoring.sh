@@ -3,7 +3,7 @@
 # 启动监控系统
 echo "Starting monitoring system..."
 
-# 启动 Prometheus 和 Grafana 服务
+# 启动 Prometheus、Alertmanager 和 Grafana 服务
 docker-compose up -d
 
 # 等待服务启动
@@ -14,6 +14,7 @@ sleep 10
 echo "Monitoring system started successfully!"
 echo "---------------------------------------"
 echo "Prometheus: http://localhost:9090"
+echo "Alertmanager: http://localhost:9093"
 echo "Grafana: http://localhost:3000"
 echo "---------------------------------------"
 echo "Grafana login credentials:"

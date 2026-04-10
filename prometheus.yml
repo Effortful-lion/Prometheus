@@ -1,6 +1,17 @@
 global:
   scrape_interval: 15s  # 每 15 秒抓取一次指标
 
+# Alertmanager 配置
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - alertmanager:9093
+
+# 告警规则配置
+rule_files:
+  - "alerts.yml"
+
 scrape_configs:
   # 抓取我们的应用程序指标
   - job_name: 'app'

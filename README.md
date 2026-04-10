@@ -20,6 +20,7 @@
 5. **访问服务**
    - 应用程序：http://localhost:8080
    - Prometheus：http://localhost:9090
+   - Alertmanager：http://localhost:9093
    - Grafana：http://localhost:3000（登录凭据：admin/admin）
 
 ## 一般指标
@@ -50,6 +51,42 @@
 chmod +x start-monitoring.sh
 ./start-monitoring.sh
 ```
+
+## Alertmanager 告警配置
+
+### 告警规则
+
+本项目配置了以下告警规则：
+
+1. **应用程序告警**
+   - `HighErrorRate`：HTTP 请求错误率超过 10%
+   - `HighResponseTime`：95% 分位响应时间超过 1 秒
+   - `HighConnectionCount`：当前连接数超过 100
+
+2. **系统告警**
+   - `PrometheusTargetDown`：监控目标 down 超过 5 分钟
+   - `PrometheusAlertmanagerDown`：Alertmanager down 超过 5 分钟
+
+### 告警通知
+
+默认配置为邮件通知，需要在 `alertmanager.yml` 中修改以下参数：
+
+```yaml
+receivers:
+- name: 'email'
+  email_configs:
+  - to: 'alerts@example.com'          # 接收告警的邮箱
+    from: 'alertmanager@example.com'  # 发送告警的邮箱
+    smarthost: 'smtp.example.com:587' # SMTP 服务器地址
+    auth_username: 'alertmanager'     # SMTP 用户名
+    auth_password: 'password'         # SMTP 密码
+    auth_identity: 'alertmanager@example.com'
+    require_tls: true
+```
+
+### 访问 Alertmanager
+
+- Alertmanager 界面：http://localhost:9093
 
 ## 如何扩展
 
@@ -118,4 +155,10 @@ chmod +x start-monitoring.sh
    - 点击左侧菜单 "Dashboard" > "Import"
    - 输入仪表板 ID 或上传 JSON 文件
    - 选择 Prometheus 数据源，点击 "Import"
+
+4. **集成 Alertmanager**
+   - 点击左侧菜单 "Alerting" > "Alertmanager"
+   - 点击 "Add Alertmanager"
+   - URL 填写：`http://alertmanager:9093`
+   - 点击 "Save"
 

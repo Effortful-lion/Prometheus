@@ -10,6 +10,17 @@ services:
       - monitoring
     restart: always
 
+  # Alertmanager 服务
+  alertmanager:
+    image: prom/alertmanager:latest
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    networks:
+      - monitoring
+    restart: always
+
   # Grafana 服务
   grafana:
     image: grafana/grafana:latest
