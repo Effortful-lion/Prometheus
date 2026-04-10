@@ -15,12 +15,12 @@ route:
 receivers:
 - name: 'email'
   email_configs:
-  - to: 'server-lion@qq.com'
-    from: 'server-lion@qq.com'
+  - to: 'example@qq.com'
+    from: 'example@qq.com'
     smarthost: 'smtp.qq.com:587'
-    auth_username: 'server-lion@qq.com'
-    auth_password: 'yanyuming123'
-    auth_identity: 'server-lion@qq.com'
+    auth_username: 'example@qq.com'
+    auth_password: 'xxx'
+    auth_identity: 'example@qq.com'
     require_tls: true
 
 inhibit_rules:
