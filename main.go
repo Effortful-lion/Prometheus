@@ -49,4 +49,14 @@ func RegisterExampleHandler() {
 
 		fmt.Fprintf(w, "Hello, Prometheus!\n")
 	})
+
+	// 添加一个测试告警的端点
+	http.HandleFunc("/test-alert", func(w http.ResponseWriter, r *http.Request) {
+		// 设置高连接数来触发告警
+		for i := 0; i < 10; i++ {
+			metrics.CurrentConnections.Inc()
+		}
+
+		fmt.Fprintf(w, "Set current_connections to 10 to trigger alert!\n")
+	})
 }
