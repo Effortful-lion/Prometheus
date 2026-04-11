@@ -11,8 +11,10 @@ Start-Sleep -Seconds 10
 # 显示访问地址
 Write-Host "Monitoring system started successfully!"
 Write-Host "---------------------------------------"
-Write-Host "Prometheus: http://localhost:9090"
-Write-Host "Alertmanager: http://localhost:9093"
+Write-Host "Prometheus 实例 1: http://localhost:9090"
+Write-Host "Prometheus 实例 2: http://localhost:9091"
+Write-Host "Alertmanager 实例 1: http://localhost:9093"
+Write-Host "Alertmanager 实例 2: http://localhost:9094"
 Write-Host "Grafana: http://localhost:3000"
 Write-Host "---------------------------------------"
 Write-Host "Grafana login credentials:"

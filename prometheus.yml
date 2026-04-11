@@ -6,7 +6,9 @@ alerting:
   alertmanagers:
   - static_configs:
     - targets:
-      - alertmanager:9093
+      - nginx:9095
+    scheme: http
+    timeout: 10s
 
 # 告警规则配置
 rule_files:
@@ -21,4 +23,9 @@ scrape_configs:
   # 抓取 Prometheus 自身的指标
   - job_name: 'prometheus'
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ['prometheus1:9090', 'prometheus2:9090']
+
+  # 抓取 Alertmanager 指标
+  - job_name: 'alertmanager'
+    static_configs:
+      - targets: ['alertmanager1:9093', 'alertmanager2:9093']

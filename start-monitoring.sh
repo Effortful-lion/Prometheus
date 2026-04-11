@@ -13,8 +13,10 @@ sleep 10
 # 显示访问地址
 echo "Monitoring system started successfully!"
 echo "---------------------------------------"
-echo "Prometheus: http://localhost:9090"
-echo "Alertmanager: http://localhost:9093"
+echo "Prometheus 实例 1: http://localhost:9090"
+echo "Prometheus 实例 2: http://localhost:9091"
+echo "Alertmanager 实例 1: http://localhost:9093"
+echo "Alertmanager 实例 2: http://localhost:9094"
 echo "Grafana: http://localhost:3000"
 echo "---------------------------------------"
 echo "Grafana login credentials:"

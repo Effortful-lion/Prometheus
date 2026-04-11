@@ -1,13 +1,13 @@
 services:
-  # Prometheus 服务
-  prometheus:
+  # Prometheus 主实例
+  prometheus1:
     image: prom/prometheus:latest
     ports:
       - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - ./alerts.yml:/etc/prometheus/alerts.yml
-      - prometheus_data:/prometheus
+      - prometheus1_data:/prometheus
     networks:
       - monitoring
     restart: always
@@ -15,21 +15,70 @@ services:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
       - "--storage.tsdb.retention.time=15d"
+      - "--web.enable-lifecycle"
 
-  # Alertmanager 服务
-  alertmanager:
+  # Prometheus 从实例
+  prometheus2:
+    image: prom/prometheus:latest
+    ports:
+      - "9091:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alerts.yml:/etc/prometheus/alerts.yml
+      - prometheus2_data:/prometheus
+    networks:
+      - monitoring
+    restart: always
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=15d"
+      - "--web.enable-lifecycle"
+
+  # Alertmanager 主实例
+  alertmanager1:
     image: prom/alertmanager:latest
     ports:
       - "9093:9093"
     volumes:
       - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
-      - alertmanager_data:/alertmanager
+      - alertmanager1_data:/alertmanager
     networks:
       - monitoring
     restart: always
     command:
       - "--config.file=/etc/alertmanager/alertmanager.yml"
       - "--storage.path=/alertmanager"
+      - "--cluster.listen-address=:9094"
+      - "--cluster.peer=alertmanager2:9094"
+
+  # Alertmanager 从实例
+  alertmanager2:
+    image: prom/alertmanager:latest
+    ports:
+      - "9094:9093"
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - alertmanager2_data:/alertmanager
+    networks:
+      - monitoring
+    restart: always
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+      - "--storage.path=/alertmanager"
+      - "--cluster.listen-address=:9094"
+      - "--cluster.peer=alertmanager1:9094"
+
+  # Nginx 负载均衡器
+  nginx:
+    image: nginx:latest
+    ports:
+      - "9095:9095"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - monitoring
+    restart: always
 
   # Grafana 服务
   grafana:
@@ -49,6 +98,8 @@ networks:
     driver: bridge
 
 volumes:
-  prometheus_data:
-  alertmanager_data:
+  prometheus1_data:
+  prometheus2_data:
+  alertmanager1_data:
+  alertmanager2_data:
   grafana_data:
