@@ -19,8 +19,11 @@
 
 5. **访问服务**
    - 应用程序：http://localhost:8080
-   - Prometheus：http://localhost:9090
-   - Alertmanager：http://localhost:9093
+   - Prometheus 主实例：http://localhost:9090
+   - Prometheus 从实例：http://localhost:9091
+   - Alertmanager 主实例：http://localhost:9093
+   - Alertmanager 从实例：http://localhost:9094
+   - Nginx 负载均衡器：http://localhost:9095
    - Grafana：http://localhost:3000（登录凭据：admin/admin）
 
 ## 一般指标
@@ -52,6 +55,30 @@ chmod +x start-monitoring.sh
 ./start-monitoring.sh
 ```
 
+## 高可用配置
+
+本项目实现了 Prometheus 和 Alertmanager 的高可用配置：
+
+1. **双实例 Prometheus**
+   - 主实例：http://localhost:9090
+   - 从实例：http://localhost:9091
+   - 两个实例同时运行，确保监控服务的高可用性
+
+2. **双实例 Alertmanager**
+   - 主实例：http://localhost:9093
+   - 从实例：http://localhost:9094
+   - 两个实例通过集群模式运行，实现告警的高可用性和去重
+
+3. **Nginx 负载均衡器**
+   - 地址：http://localhost:9095
+   - 为 Alertmanager 提供负载均衡，确保告警能够稳定送达
+   - 当其中一个 Alertmanager 实例宕机时，自动将请求转发到另一个健康实例
+
+4. **持久化存储**
+   - 使用 Docker 卷持久化存储 Prometheus 和 Alertmanager 的数据
+   - 确保服务重启后数据不丢失
+   - 配置了 15 天的数据保留期
+
 ## Alertmanager 告警配置
 
 ### 告警规则
@@ -60,8 +87,8 @@ chmod +x start-monitoring.sh
 
 1. **应用程序告警**
    - `HighErrorRate`：HTTP 请求错误率超过 10%
-   - `HighResponseTime`：95% 分位响应时间超过 1 秒
-   - `HighConnectionCount`：当前连接数超过 100
+   - `HighResponseTime`：95% 分位响应时间超过 0.1 秒
+   - `HighConnectionCount`：当前连接数超过 5
 
 2. **系统告警**
    - `PrometheusTargetDown`：监控目标 down 超过 5 分钟
@@ -87,6 +114,24 @@ receivers:
 ### 访问 Alertmanager
 
 - Alertmanager 界面：http://localhost:9093
+- Alertmanager 负载均衡地址：http://localhost:9095
+
+### 测试告警
+
+1. **触发高连接数告警**
+   - 访问：http://localhost:8080/test-alert
+   - 这将设置当前连接数为 10，触发 `HighConnectionCount` 告警
+
+2. **测试邮件发送**
+   - 确保在 `alertmanager.yml` 中正确配置了邮件通知参数
+   - 触发告警后，查看 Alertmanager 日志，确认邮件发送状态：
+     ```bash
+     docker logs prometheus-alertmanager1-1
+     ```
+
+3. **检查告警状态**
+   - 在 Prometheus 界面查看告警状态：http://localhost:9090/alerts
+   - 在 Alertmanager 界面查看告警状态：http://localhost:9093
 
 ## 如何扩展
 
